@@ -1,0 +1,86 @@
+package mmm;
+import robocode.*;
+import java.awt.Color;
+//using system.drawing;
+
+// API help : http://robocode.sourceforge.net/docs/robocode/robocode/Robot.html
+
+/**
+ * BadRobot - a robot by (your name here)
+ */
+public class BadRobot extends AdvancedRobot
+{
+	/**
+	 * run: BadRobot's default behavior
+	 */
+	public void run() {
+		// Initialization of the robot should be put here
+
+		// After trying out your robot, try uncommenting the import at the top,
+		// and the next line:
+
+		setColors(Color.WHITE,Color.BLUE,Color.GREEN);
+		// body,gun,radar
+
+		// Robot main loop
+		while(true) {
+			// Replace the next 4 lines with any behavior you would like
+			setAdjustGunForRobotTurn(true);
+			setBack(100);
+			setAhead(100);
+			turnGunRight(360);
+			
+			
+		}
+	}
+		//figure out what this does:
+		public double normalizeBearing(double angle) {
+			while (angle >  180) angle -= 360;
+			while (angle < -180) angle += 360;
+			return angle;
+		}
+		
+	/**
+	 * onScannedRobot: What to do when you see another robot
+	 */
+	public void onScannedRobot(ScannedRobotEvent e) {
+		setTurnGunRight(normalizeBearing(getHeading() - getGunHeading() + e.getBearing()));
+		//Makes sure the gun can actually fire and probably won't miss.
+		if (getGunHeat() == 0 && Math.abs(getGunTurnRemaining()) < 1) {
+			fire(Math.min(400/e.getDistance(),3));
+		}
+	}
+
+	/**
+	 * onHitByBullet: What to do when you're hit by a bullet
+	 */
+	public void onHitByBullet(HitByBulletEvent e) {
+		// Replace the next line with any behavior you would like
+		setTurnGunRight(getHeading() - getGunHeading() + e.getBearing());
+		setTurnRight(90);
+		ahead(200);
+		setTurnGunRight(getHeading() - getGunHeading() + e.getBearing());
+	}
+	
+	/**
+	 * onHitWall: What to do when you hit a wall
+	 */
+	public void onHitWall(HitWallEvent e) {
+		if(-90 <= e.getBearing() && e.getBearing() < 90) {
+			setBack(400);
+		}
+		else {
+			setAhead(400);
+		}
+	}
+	public void onHitRobot(HitRobotEvent e) {
+		if(-90 <= e.getBearing() && e.getBearing() < 90) {
+			setTurnRight(-180);
+			setBack(400);
+		}
+		else {
+			setTurnRight(180);
+			setAhead(400);
+		}
+	}	
+}
